@@ -1,26 +1,24 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import PercentageCircle from './PercentageCircle';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default class App extends React.PureComponent<{}, {percentage: number}>{
+  public constructor(props: {}) {
+    super(props);
+    this.state = {
+      percentage: 50,
+    };
+  }
+
+  readonly #sliderChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    this.setState({ percentage: parseInt(e.target.value, 10) });
+  }
+
+  public render() {
+    return (
+      <div className="App">
+        <PercentageCircle percent={this.state.percentage} />
+        <input type="range" min="0" max="100" onChange={this.#sliderChange} />
+      </div>
+    );
+  }
 }
-
-export default App;
