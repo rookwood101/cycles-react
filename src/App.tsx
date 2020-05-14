@@ -1,5 +1,5 @@
 import React from 'react';
-import PercentageCircleSVG from './PercentageCircleSVG';
+import ConcentricCircles from './ConcentricCircles';
 
 export default class App extends React.PureComponent<{}, {percentage: number}>{
   #lastFrameTime: number;
@@ -32,7 +32,7 @@ export default class App extends React.PureComponent<{}, {percentage: number}>{
   public render() {
     return (
       <div className="App">
-        <PercentageCircleSVG percent={this.state.percentage} radius={25}/>
+        <ConcentricCircles percentage={this.state.percentage}/>
         <input type="range" min="0" max="100" step="0.01"
                style={{width: "calc(100% - 6px)"}}
                onMouseDown={this.#sliderChange} onChange={this.#sliderChange}

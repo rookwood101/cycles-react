@@ -1,8 +1,10 @@
 import React from 'react';
 
 interface PercentageCircleProps {
-    percent: number,
+    percentage: number,
     radius: number,
+    viewBox: number,
+    strokeWidth: number,
 }
 
 export default class PercentageCircle extends
@@ -25,27 +27,29 @@ export default class PercentageCircle extends
     }
 
     readonly #viewBox = (): number => {
-        return this.#diameter() + 1;
+        return this.props.viewBox;
     }
 
     readonly #percentageStrokeDashArray = (): string => {
-        const fractionOfCircumference = this.props.percent / 100 * this.#circumference();
+        const fractionOfCircumference = this.props.percentage / 100 * this.#circumference();
         return `${fractionOfCircumference}, ${this.#circumference()}`;
+    }
+
+    readonly #strokeWidth = (): number => {
+        return this.props.strokeWidth;
     }
 
     public render() {
         return (
-            <svg viewBox={`0 0 ${this.#viewBox()} ${this.#viewBox()}`}>
                 <path
-                    d={`M ${this.#viewBox()/2} 0.5
+                    d={`M ${this.#viewBox()/2} ${this.#viewBox()/2 - this.#radius()}
                         a ${this.#radius()} ${this.#radius()} 0 0 1 0 ${this.#diameter()}
                         a ${this.#radius()} ${this.#radius()} 0 0 1 0 -${this.#diameter()}`}
                     fill="none"
                     stroke="#444"
-                    strokeWidth="1"
+                    strokeWidth={this.#strokeWidth()}
                     strokeDasharray={this.#percentageStrokeDashArray()}
                 />
-            </svg>
         );
     }
 }
