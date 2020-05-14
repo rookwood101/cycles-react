@@ -2058,6 +2058,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/testing-library__react@npm:^10.0.1":
+  version: 10.0.1
+  resolution: "@types/testing-library__react@npm:10.0.1"
+  dependencies:
+    "@types/react-dom": "*"
+    "@types/testing-library__dom": "*"
+    pretty-format: ^25.1.0
+  checksum: 2/20b6597fad68760af1590aa897abc0f75c19f747fc461ae81adf3405c43b37064903df02c38edce2c23c01194b17765feefb4f534cb12679a94b83e7e6240716
+  languageName: node
+  linkType: hard
+
 "@types/testing-library__react@npm:^9.1.2":
   version: 9.1.3
   resolution: "@types/testing-library__react@npm:9.1.3"
@@ -11921,6 +11932,7 @@ fsevents@^1.2.7:
     "@types/node": ^12.0.0
     "@types/react": ^16.9.0
     "@types/react-dom": ^16.9.0
+    "@types/testing-library__react": ^10.0.1
     "@yarnpkg/pnpify": ^2.0.0-rc.21
     react: ^16.13.1
     react-dom: ^16.13.1
