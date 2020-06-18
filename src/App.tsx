@@ -2,14 +2,14 @@ import React from 'react';
 import ConcentricCircles from './ConcentricCircles';
 
 export default class App extends React.PureComponent<{}, {percentage: number}>{
-  #lastFrameTime: number;
+  private lastFrameTime: number;
 
   public constructor(props: {}) {
     super(props);
     this.state = {
       percentage: 0,
     };
-    this.#lastFrameTime = performance.now();
+    this.lastFrameTime = performance.now();
   }
 
   public componentDidMount(): void {
@@ -18,8 +18,8 @@ export default class App extends React.PureComponent<{}, {percentage: number}>{
 
   readonly #increment = (): void => {
     const currentFrameTime = performance.now();
-    const deltaTime = currentFrameTime - this.#lastFrameTime;
-    this.#lastFrameTime = currentFrameTime;
+    const deltaTime = currentFrameTime - this.lastFrameTime;
+    this.lastFrameTime = currentFrameTime;
 
     this.setState({percentage: this.state.percentage % 100 + 0.01*deltaTime});
     requestAnimationFrame(this.#increment);
