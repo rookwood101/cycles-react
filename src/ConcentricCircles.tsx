@@ -8,29 +8,37 @@ interface ConcentricCirclesProps {
 
 export default class ConcentricCircles extends
         React.PureComponent<ConcentricCirclesProps, {}> {
+    
+    // TODO: this class should manage one circle and animate it to it's current %
+    private readonly viewBox = 105;
+    private readonly maxRadius = this.viewBox / 2.0;
+    private readonly maxStrokeWidth = 3;
 
     private readonly tasks = Array.from({length: 10}, () => Task.randomTask());
 
-    private readonly viewBox = 105;
+    private readonly distributeAlongCurve = (inputMin: number, inputMax: number, outputMin: number, outputMax: number, input: number): number => {
+        return (input - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin;
+    }
 
     private readonly renderCircle = (task: Task): React.ReactElement => {
         return (
-            <PercentageCircleSVG
+            // TODO: move task deconstruction into new class TaskCircle
+            <PercentageCircleSVG 
                 percentage={this.props.percentage}
-                radius={task.regularity.asMinutes()}
+                radius={this.distributeAlongCurve(0, 24*60*60, 1, this.maxRadius, task.regularity.asSeconds())}
                 viewBox={this.viewBox}
-                strokeWidth={task.durationUntil().asYears()}
-                key={task.uuid}/>
+                strokeWidth={this.distributeAlongCurve(0, 365*24*60*60, 0.5, this.maxStrokeWidth, task.durationUntil().asSeconds())}
+                key={task.uuid}
+                text={task.description}
+            />
         );
     };
 
     private readonly render10Circles = (): React.ReactElement[] => {
 
-        let result = this.tasks.map((task, i) => {
-            // Each should have an ID https://fb.me/react-warning-keys
+        return this.tasks.map((task, i) => {
             return this.renderCircle(task);
         });
-        return result;
     }
 
     

@@ -3,7 +3,7 @@ import {v4 as uuidv4} from 'uuid';
 import faker from 'faker';
 
 export default class Task {
-    private readonly description: string;
+    public readonly description: string;
     public readonly regularity: moment.Duration;
     private readonly nextOccurence: moment.Moment;
     public readonly uuid: string;
@@ -23,9 +23,9 @@ export default class Task {
 
     public static randomTask() {
         return new Task(
-            faker.lorem.sentence(),
-            moment.duration(faker.random.number(), "minutes"),
-            moment(faker.date.future())
+            faker.random.arrayElement([..."🎫🧺🛶🎶💻🧭💃⚽"]),
+            moment.duration(faker.random.number(24*60), "minutes"), // up to 1 day
+            moment(faker.date.future(1)), // up to 1 year in the future
         );
     }
 }
