@@ -1,5 +1,6 @@
 import React  from 'react';
 import PercentageCircleSVG from './PercentageCircleSVG';
+import Task from './Task';
 
 interface ConcentricCirclesProps {
     percentage: number,
@@ -8,24 +9,36 @@ interface ConcentricCirclesProps {
 export default class ConcentricCircles extends
         React.PureComponent<ConcentricCirclesProps, {}> {
 
-    private readonly viewBox = 101;
+    private readonly tasks = Array.from({length: 10}, () => Task.randomTask());
 
-    private readonly renderCircle = (radius: number, strokeWidth: number): React.ReactElement => {
+    private readonly viewBox = 105;
+
+    private readonly renderCircle = (task: Task): React.ReactElement => {
         return (
             <PercentageCircleSVG
                 percentage={this.props.percentage}
-                radius={radius}
+                radius={task.regularity.asMinutes()}
                 viewBox={this.viewBox}
-                strokeWidth={strokeWidth}/>
+                strokeWidth={task.durationUntil().asYears()}
+                key={task.uuid}/>
         );
     };
+
+    private readonly render10Circles = (): React.ReactElement[] => {
+
+        let result = this.tasks.map((task, i) => {
+            // Each should have an ID https://fb.me/react-warning-keys
+            return this.renderCircle(task);
+        });
+        return result;
+    }
+
+    
     
     public render() {
         return (
             <svg viewBox={`0 0 ${this.viewBox} ${this.viewBox}`}>
-                {this.renderCircle(48, 5)}
-                {this.renderCircle(25, 2)}
-                {this.renderCircle(10, 1)}
+                {this.render10Circles()}
             </svg>
         );
     }

@@ -7,6 +7,8 @@ interface PercentageCircleProps {
     strokeWidth: number,
 }
 
+// animate to a percentage
+
 export default class PercentageCircle extends
         React.PureComponent<PercentageCircleProps, {}> {
 
@@ -49,6 +51,7 @@ export default class PercentageCircle extends
                     stroke="#444"
                     strokeWidth={this.strokeWidth()}
                     strokeDasharray={this.percentageStrokeDashArray()}
+                    strokeLinecap="round"
                 />
         );
     }
