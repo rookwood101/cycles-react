@@ -67,7 +67,9 @@ export default class ConcentricCircles extends
     
     public render() {
         return (
-            <svg viewBox={`0 0 ${this.viewBox} ${this.viewBox}`}>
+            <svg
+                viewBox={`0 0 ${this.viewBox} ${this.viewBox}`}
+            >
                 {this.render10Circles()}
             </svg>
         );
