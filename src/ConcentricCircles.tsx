@@ -4,6 +4,8 @@ import Task from './Task';
 
 interface ConcentricCirclesProps {
     percentage: number,
+    showTaskDetail: (task: Task) => ((event: React.MouseEvent<Element, MouseEvent>) => void),
+    hideTaskDetail: () => void,
 }
 
 export default class ConcentricCircles extends
@@ -30,6 +32,8 @@ export default class ConcentricCircles extends
                 strokeWidth={this.distributeAlongCurve(0, 365*24*60*60, 0.5, this.maxStrokeWidth, task.durationUntil().asSeconds())}
                 key={task.uuid}
                 text={task.description}
+                onMouseEnter={this.props.showTaskDetail(task)}
+                onMouseLeave={this.props.hideTaskDetail}
             />
         );
     };

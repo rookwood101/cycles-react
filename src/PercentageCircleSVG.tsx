@@ -6,6 +6,8 @@ interface PercentageCircleProps {
     viewBox: number,
     strokeWidth: number,
     text: string,
+    onMouseEnter: (event: React.MouseEvent<Element, MouseEvent>) => void,
+    onMouseLeave: (event: React.MouseEvent<Element, MouseEvent>) => void,
 }
 
 // animate to a percentage
@@ -57,7 +59,10 @@ export default class PercentageCircle extends
     public render() {
         const [tipX, tipY] = this.tipCoordinate();
         return (
-            <g>
+            <g
+                onMouseEnter={this.props.onMouseEnter}
+                onMouseLeave={this.props.onMouseLeave}
+            >
                 <path
                     d={`M ${this.viewBox()/2} ${this.viewBox()/2 - this.radius()}
                         a ${this.radius()} ${this.radius()} 0 0 1 0 ${this.diameter()}

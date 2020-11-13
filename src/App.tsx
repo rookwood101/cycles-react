@@ -1,13 +1,21 @@
 import React from 'react';
 import ConcentricCircles from './ConcentricCircles';
+import Task from './Task';
+import TaskDetail from './TaskDetail';
 
-export default class App extends React.PureComponent<{}, {percentage: number}>{
+interface AppState {
+  percentage: number,
+  selectedTask: Task | null,
+}
+
+export default class App extends React.PureComponent<{}, AppState>{
   private lastFrameTime: number;
 
   public constructor(props: {}) {
     super(props);
     this.state = {
       percentage: 0,
+      selectedTask: null,
     };
     this.lastFrameTime = performance.now();
   }
@@ -32,7 +40,12 @@ export default class App extends React.PureComponent<{}, {percentage: number}>{
   public render() {
     return (
       <div className="App">
-        <ConcentricCircles percentage={this.state.percentage}/>
+        <TaskDetail task={this.state.selectedTask}/>
+        <ConcentricCircles
+          percentage={this.state.percentage}
+          showTaskDetail={(task) => () => {this.setState({selectedTask: task})}}
+          hideTaskDetail={() => this.setState({selectedTask: null})}
+        />
         <input type="range" min="0" max="100" step="0.01"
                style={{width: "calc(100% - 6px)"}}
                onMouseDown={this.#sliderChange} onChange={this.#sliderChange}

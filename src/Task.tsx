@@ -5,7 +5,7 @@ import faker from 'faker';
 export default class Task {
     public readonly description: string;
     public readonly regularity: moment.Duration;
-    private readonly nextOccurence: moment.Moment;
+    public readonly nextOccurence: moment.Moment;
     public readonly uuid: string;
 
     public constructor(description: string,
