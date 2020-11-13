@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React  from 'react';
 import PercentageCircleSVG from './PercentageCircleSVG';
 import Task from './Task';
@@ -16,7 +17,12 @@ export default class ConcentricCircles extends
     private readonly maxRadius = this.viewBox / 2.0;
     private readonly maxStrokeWidth = 3;
 
-    private readonly tasks = Array.from({length: 10}, () => Task.randomTask());
+    private readonly tasks = Array.from(
+        {length: 10},
+        () => Task.randomTask()
+    ).sort(
+        (a, b) => a.regularity.asSeconds() - b.regularity.asSeconds()
+    );
 
     private readonly distributeAlongCurve = (inputMin: number, inputMax: number, outputMin: number, outputMax: number, input: number): number => {
         return (input - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin;
@@ -26,10 +32,22 @@ export default class ConcentricCircles extends
         return (
             // TODO: move task deconstruction into new class TaskCircle
             <PercentageCircleSVG 
-                percentage={this.props.percentage}
-                radius={this.distributeAlongCurve(0, 24*60*60, 1, this.maxRadius, task.regularity.asSeconds())}
+                percentage={task.percentageElapsedSincePreviousOccurence()}
+                radius={this.distributeAlongCurve(
+                    0,
+                    this.tasks.length - 1,
+                    1,
+                    this.maxRadius,
+                    this.tasks.indexOf(task),
+                )}
                 viewBox={this.viewBox}
-                strokeWidth={this.distributeAlongCurve(0, 365*24*60*60, 0.5, this.maxStrokeWidth, task.durationUntil().asSeconds())}
+                strokeWidth={this.distributeAlongCurve(
+                    0,
+                    1,
+                    0.5,
+                    this.maxStrokeWidth,
+                    (task.regularity.asSeconds() - task.durationUntil().asSeconds()) / task.regularity.asSeconds(),
+                )}
                 key={task.uuid}
                 text={task.description}
                 onMouseEnter={this.props.showTaskDetail(task)}

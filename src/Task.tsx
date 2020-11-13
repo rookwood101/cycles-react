@@ -21,11 +21,20 @@ export default class Task {
         return moment.duration(this.nextOccurence.diff(moment.now()));
     }
 
+    public readonly percentageElapsedSincePreviousOccurence = (): number => {
+        const regularity = this.regularity.asMilliseconds();
+        const durationUntil = this.durationUntil().asMilliseconds();
+        return (regularity - durationUntil) / regularity * 100;
+    }
+
     public static randomTask() {
+        const upTo1MonthDuration = moment.duration(faker.random.number(30*24*60), "minutes");
+        const upToDuration = moment(faker.date.between(moment().toDate(), moment().add(upTo1MonthDuration).toDate()));
+
         return new Task(
             faker.random.arrayElement([..."🎫🧺🛶🎶💻🧭💃⚽"]),
-            moment.duration(faker.random.number(24*60), "minutes"), // up to 1 day
-            moment(faker.date.future(1)), // up to 1 year in the future
+            upTo1MonthDuration,
+            upToDuration,
         );
     }
 }

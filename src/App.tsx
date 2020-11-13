@@ -30,7 +30,7 @@ export default class App extends React.PureComponent<{}, AppState>{
     this.lastFrameTime = currentFrameTime;
 
     this.setState({percentage: this.state.percentage % 100 + 0.01*deltaTime});
-    requestAnimationFrame(this.#increment);
+    // requestAnimationFrame(this.#increment);
   }
 
   readonly #sliderChange = (e: React.SyntheticEvent<HTMLInputElement>): void => {
