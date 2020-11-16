@@ -1,6 +1,6 @@
 import React from 'react';
-import useAnimationFrame from './useAnimationFrame';
 import { keyframes, cubicBezier, Animation } from 'popmotion';
+import useAnimationFrame from './useAnimationFrame';
 
 interface PercentageCircleProps {
     percentage: number,
