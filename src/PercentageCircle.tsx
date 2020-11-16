@@ -1,5 +1,6 @@
 import React from 'react';
 import useAnimationFrame from './useAnimationFrame';
+import { keyframes, cubicBezier, Animation } from 'popmotion';
 
 interface PercentageCircleProps {
     percentage: number,
@@ -14,8 +15,8 @@ interface PercentageCircleProps {
 const defaultStrokeColour = "lightgrey";
 const hoverStrokeColour = "grey"
 
-const tipCoordinate = (props: PercentageCircleProps): [number, number] => {
-    const angle = props.percentage / 100 * 2 * Math.PI;
+const tipCoordinate = (props: PercentageCircleProps, percentage: number): [number, number] => {
+    const angle = percentage / 100 * 2 * Math.PI;
     const radius = props.radius;
     const xOffset = props.viewBox / 2;
     const yOffset = props.viewBox / 2;
@@ -26,19 +27,32 @@ const circumference = (radius: number): number => {
     return 2 * Math.PI * radius;
 }
 
-const percentageStrokeDashArray = (props: PercentageCircleProps, animationPercentage: number): string => {
-    const fractionOfCircumference = animationPercentage / 100 * circumference(props.radius);
+const percentageStrokeDashArray = (props: PercentageCircleProps, percentage: number): string => {
+    const fractionOfCircumference = percentage / 100 * circumference(props.radius);
     return `${fractionOfCircumference}, ${circumference(props.radius)}`;
 }
 
+const makePercentageAnimation = (target: number): Animation<number | string> => {
+    return keyframes<number>({
+        from: 0,
+        to: target,
+        duration: 2000,
+        ease: cubicBezier(.4,0,.4,1),
+    });
+}
+
 const PercentageCircle: React.FC<PercentageCircleProps> = (props) => {
+    console.log("rerender");
     const [strokeColour, setStrokeColour] = React.useState(defaultStrokeColour);
+
+    const percentageAnimation = makePercentageAnimation(props.percentage);
     const [animationPercentage, setAnimationPercentage] = React.useState(0);
-    useAnimationFrame(deltaTime => {
-        setAnimationPercentage(prev => Math.min(prev + deltaTime * 0.04, props.percentage));
+    useAnimationFrame((_deltaTime, totalTime) => {
+        const nextAnimationPercentage = percentageAnimation.next(totalTime);
+        setAnimationPercentage(Number(nextAnimationPercentage.value));
     });
 
-    const [tipX, tipY] = tipCoordinate(props);
+    const [tipX, tipY] = tipCoordinate(props, animationPercentage);
 
     return (
         <g
