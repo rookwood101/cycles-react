@@ -12,9 +12,8 @@ const TaskDetail: React.FC<TaskDetailProps> = (props) => {
                 <p>Selected Task</p>
                 <p>UUID: {props.task.uuid}</p>
                 <p>Description: {props.task.description}</p>
-                <p>Regularity: {props.task.regularity.humanize()}</p>
-                <p>Next occurence {props.task.nextOccurence.toISOString()}</p>
-                <p>Duration until: {props.task.durationUntil().humanize()}</p>
+                <p>Occurs every {props.task.regularity.humanize()}</p>
+                <p>Next occurence in {props.task.durationUntil().humanize()} on {props.task.nextOccurence.toLocaleString()}</p>
             </div>
         );
     } else {
