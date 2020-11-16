@@ -7,69 +7,67 @@ interface ConcentricCirclesProps {
     hideTaskDetail: () => void,
 }
 
-export default class ConcentricCircles extends
-        React.PureComponent<ConcentricCirclesProps, {}> {
-    
-    // TODO: this class should manage one circle and animate it to it's current %
-    private readonly viewBox = 105;
-    private readonly maxRadius = this.viewBox / 2.0;
-    private readonly maxStrokeWidth = 3;
+// TODO: this class should manage one circle and animate it to it's current %
+const viewBox = 105;
+const maxRadius = viewBox / 2.0;
+const maxStrokeWidth = 3;
 
-    private readonly tasks = Array.from(
-        {length: 10},
-        () => Task.randomTask()
-    ).sort(
-        (a, b) => a.regularity.asSeconds() - b.regularity.asSeconds()
+
+
+const distributeAlongCurve = (inputMin: number, inputMax: number, outputMin: number, outputMax: number, input: number): number => {
+    return (input - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin;
+}
+
+const renderCircle = (props: ConcentricCirclesProps, task: Task, tasks: Task[]): React.ReactElement => {
+    return (
+        // TODO: move task deconstruction into new class TaskCircle
+        <PercentageCircle
+            percentage={task.percentageElapsedSincePreviousOccurence()}
+            radius={distributeAlongCurve(
+                0,
+                tasks.length - 1,
+                1,
+                maxRadius,
+                tasks.indexOf(task),
+            )}
+            viewBox={viewBox}
+            strokeWidth={distributeAlongCurve(
+                0,
+                1,
+                0.5,
+                maxStrokeWidth,
+                (task.regularity.asSeconds() - task.durationUntil().asSeconds()) / task.regularity.asSeconds(),
+            )}
+            key={task.uuid}
+            text={task.description}
+            onMouseEnter={props.showTaskDetail(task)}
+            onMouseLeave={props.hideTaskDetail}
+        />
+    );
+};
+
+const render10Circles = (props: ConcentricCirclesProps, tasks: Task[]): React.ReactElement[] => {
+    return tasks.map((task, i) => {
+        return renderCircle(props, task, tasks);
+    });
+}
+
+const ConcentricCircles: React.FC<ConcentricCirclesProps> = (props) => {
+    const [tasks] = React.useState(
+        Array.from(
+            {length: 10},
+            () => Task.randomTask()
+        ).sort(
+            (a, b) => a.regularity.asSeconds() - b.regularity.asSeconds()
+        )
     );
 
-    private readonly distributeAlongCurve = (inputMin: number, inputMax: number, outputMin: number, outputMax: number, input: number): number => {
-        return (input - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin;
-    }
-
-    private readonly renderCircle = (task: Task): React.ReactElement => {
-        return (
-            // TODO: move task deconstruction into new class TaskCircle
-            <PercentageCircle
-                percentage={task.percentageElapsedSincePreviousOccurence()}
-                radius={this.distributeAlongCurve(
-                    0,
-                    this.tasks.length - 1,
-                    1,
-                    this.maxRadius,
-                    this.tasks.indexOf(task),
-                )}
-                viewBox={this.viewBox}
-                strokeWidth={this.distributeAlongCurve(
-                    0,
-                    1,
-                    0.5,
-                    this.maxStrokeWidth,
-                    (task.regularity.asSeconds() - task.durationUntil().asSeconds()) / task.regularity.asSeconds(),
-                )}
-                key={task.uuid}
-                text={task.description}
-                onMouseEnter={this.props.showTaskDetail(task)}
-                onMouseLeave={this.props.hideTaskDetail}
-            />
-        );
-    };
-
-    private readonly render10Circles = (): React.ReactElement[] => {
-
-        return this.tasks.map((task, i) => {
-            return this.renderCircle(task);
-        });
-    }
-
-    
-    
-    public render() {
-        return (
-            <svg
-                viewBox={`0 0 ${this.viewBox} ${this.viewBox}`}
-            >
-                {this.render10Circles()}
-            </svg>
-        );
-    }
-}
+    return (
+        <svg
+            viewBox={`0 0 ${viewBox} ${viewBox}`}
+        >
+            {render10Circles(props, tasks)}
+        </svg>
+    );
+};
+export default ConcentricCircles;
