@@ -8,12 +8,13 @@ interface PercentageCircleProps {
     positionOffset: [number, number],
     thickness: number,
     text: string,
-    onMouseEnter: (event: React.MouseEvent<Element, MouseEvent>) => void,
-    onMouseLeave: (event: React.MouseEvent<Element, MouseEvent>) => void,
+    onMouseEnter: () => void,
+    onMouseLeave: () => void,
 }
 
 const defaultStrokeColour = "lightgrey";
-const hoverStrokeColour = "grey"
+const hoverStrokeColour = "grey";
+const selectedStrokeColour = "darkgrey";
 
 const tipCoordinate = (props: PercentageCircleProps, percentage: number): [number, number] => {
     const angle = percentage / 100 * 2 * Math.PI;
@@ -56,8 +57,8 @@ const PercentageCircle: React.FC<PercentageCircleProps> = (props) => {
 
     return (
         <g
-            onMouseEnter={(event) => {setStrokeColour(hoverStrokeColour); props.onMouseEnter(event)}}
-            onMouseLeave={(event) => {setStrokeColour(defaultStrokeColour); props.onMouseLeave(event)}}
+            onMouseEnter={() => {setStrokeColour(hoverStrokeColour); props.onMouseEnter()}}
+            onMouseLeave={() => {setStrokeColour(defaultStrokeColour); props.onMouseLeave()}}
         >
             <path
                 d={`M ${xOffset} ${yOffset - props.radius}
