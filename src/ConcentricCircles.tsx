@@ -1,10 +1,8 @@
-import moment from 'moment';
 import React  from 'react';
-import PercentageCircleSVG from './PercentageCircleSVG';
+import PercentageCircle from './PercentageCircle';
 import Task from './Task';
 
 interface ConcentricCirclesProps {
-    percentage: number,
     showTaskDetail: (task: Task) => ((event: React.MouseEvent<Element, MouseEvent>) => void),
     hideTaskDetail: () => void,
 }
@@ -31,7 +29,7 @@ export default class ConcentricCircles extends
     private readonly renderCircle = (task: Task): React.ReactElement => {
         return (
             // TODO: move task deconstruction into new class TaskCircle
-            <PercentageCircleSVG 
+            <PercentageCircle
                 percentage={task.percentageElapsedSincePreviousOccurence()}
                 radius={this.distributeAlongCurve(
                     0,
