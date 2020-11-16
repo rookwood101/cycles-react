@@ -1,9 +1,10 @@
 import React  from 'react';
 import PercentageCircle from './PercentageCircle';
 import Task from './Task';
+import TaskCircle from './TaskCircle';
 
 interface ConcentricCirclesProps {
-    showTaskDetail: (task: Task) => ((event: React.MouseEvent<Element, MouseEvent>) => void),
+    showTaskDetail: (task: Task) => (() => void),
     hideTaskDetail: () => void,
 }
 
@@ -17,10 +18,10 @@ const distributeAlongCurve = (inputMin: number, inputMax: number, outputMin: num
 
 const renderCircle = (props: ConcentricCirclesProps, task: Task, tasks: Task[]): React.ReactElement => {
     return (
-        // TODO: move task deconstruction into new class TaskCircle
         // TODO: implement click and drag to move circles
-        <PercentageCircle
-            percentage={task.percentageElapsedSincePreviousOccurence()}
+        <TaskCircle
+            key={task.uuid}
+            task={task}
             radius={distributeAlongCurve(
                 0,
                 tasks.length - 1,
@@ -28,27 +29,19 @@ const renderCircle = (props: ConcentricCirclesProps, task: Task, tasks: Task[]):
                 maxRadius,
                 tasks.indexOf(task),
             )}
-            viewBox={viewBox}
-            strokeWidth={distributeAlongCurve(
+            positionOffset={[viewBox/2, viewBox/2]}
+            thickness={distributeAlongCurve(
                 0,
                 1,
                 0.5,
                 maxStrokeWidth,
                 (task.regularity.asSeconds() - task.durationUntil().asSeconds()) / task.regularity.asSeconds(),
             )}
-            key={task.uuid}
-            text={task.description}
             onMouseEnter={props.showTaskDetail(task)}
             onMouseLeave={props.hideTaskDetail}
         />
     );
 };
-
-const render10Circles = (props: ConcentricCirclesProps, tasks: Task[]): React.ReactElement[] => {
-    return tasks.map((task, i) => {
-        return renderCircle(props, task, tasks);
-    });
-}
 
 const ConcentricCircles: React.FC<ConcentricCirclesProps> = (props) => {
     const [tasks] = React.useState(
@@ -60,11 +53,15 @@ const ConcentricCircles: React.FC<ConcentricCirclesProps> = (props) => {
         )
     );
 
+    const circles = tasks.map((task) => {
+        return renderCircle(props, task, tasks);
+    });
+
     return (
         <svg
             viewBox={`0 0 ${viewBox} ${viewBox}`}
         >
-            {render10Circles(props, tasks)}
+            {circles}
         </svg>
     );
 };

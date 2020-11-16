@@ -5,8 +5,8 @@ import useAnimationFrame from './useAnimationFrame';
 interface PercentageCircleProps {
     percentage: number,
     radius: number,
-    viewBox: number,
-    strokeWidth: number,
+    positionOffset: [number, number],
+    thickness: number,
     text: string,
     onMouseEnter: (event: React.MouseEvent<Element, MouseEvent>) => void,
     onMouseLeave: (event: React.MouseEvent<Element, MouseEvent>) => void,
@@ -18,8 +18,7 @@ const hoverStrokeColour = "grey"
 const tipCoordinate = (props: PercentageCircleProps, percentage: number): [number, number] => {
     const angle = percentage / 100 * 2 * Math.PI;
     const radius = props.radius;
-    const xOffset = props.viewBox / 2;
-    const yOffset = props.viewBox / 2;
+    const [xOffset, yOffset] = props.positionOffset;
     return [radius * Math.sin(angle) + xOffset, -radius * Math.cos(angle) + yOffset];
 }
 
@@ -53,6 +52,7 @@ const PercentageCircle: React.FC<PercentageCircleProps> = (props) => {
     });
 
     const [tipX, tipY] = tipCoordinate(props, animationPercentage);
+    const [xOffset, yOffset] = props.positionOffset;
 
     return (
         <g
@@ -60,12 +60,12 @@ const PercentageCircle: React.FC<PercentageCircleProps> = (props) => {
             onMouseLeave={(event) => {setStrokeColour(defaultStrokeColour); props.onMouseLeave(event)}}
         >
             <path
-                d={`M ${props.viewBox/2} ${props.viewBox/2 - props.radius}
+                d={`M ${xOffset} ${yOffset - props.radius}
                     a ${props.radius} ${props.radius} 0 0 1 0 ${props.radius*2}
                     a ${props.radius} ${props.radius} 0 0 1 0 -${props.radius*2}`}
                 fill="none"
                 stroke={strokeColour}
-                strokeWidth={props.strokeWidth}
+                strokeWidth={props.thickness}
                 strokeDasharray={percentageStrokeDashArray(props, animationPercentage)}
                 strokeLinecap="round"
             />
