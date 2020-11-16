@@ -8,9 +8,7 @@ export default class Task {
     public readonly nextOccurence: moment.Moment;
     public readonly uuid: string;
 
-    public constructor(description: string,
-                       regularity: moment.Duration,
-                       nextOccurence: moment.Moment) {
+    public constructor(description: string, regularity: moment.Duration, nextOccurence: moment.Moment) {
         this.description = description;
         this.regularity = regularity;
         this.nextOccurence = nextOccurence;

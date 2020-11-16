@@ -7,12 +7,9 @@ interface ConcentricCirclesProps {
     hideTaskDetail: () => void,
 }
 
-// TODO: this class should manage one circle and animate it to it's current %
 const viewBox = 105;
 const maxRadius = viewBox / 2.0;
 const maxStrokeWidth = 3;
-
-
 
 const distributeAlongCurve = (inputMin: number, inputMax: number, outputMin: number, outputMax: number, input: number): number => {
     return (input - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin;
@@ -21,6 +18,7 @@ const distributeAlongCurve = (inputMin: number, inputMax: number, outputMin: num
 const renderCircle = (props: ConcentricCirclesProps, task: Task, tasks: Task[]): React.ReactElement => {
     return (
         // TODO: move task deconstruction into new class TaskCircle
+        // TODO: implement click and drag to move circles
         <PercentageCircle
             percentage={task.percentageElapsedSincePreviousOccurence()}
             radius={distributeAlongCurve(
