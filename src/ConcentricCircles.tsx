@@ -10,28 +10,37 @@ interface ConcentricCirclesProps {
 
 const viewBox = 105;
 const maxRadius = viewBox / 2;
+const minRadius = 2;
 const positionOffset = viewBox / 2;
 const maxStrokeWidth = 3;
+const snapRadiusStride = 6;
+const snapDistance = snapRadiusStride / 4;
 
 const distributeAlongCurve = (inputMin: number, inputMax: number, outputMin: number, outputMax: number, input: number): number => {
     return (input - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin;
 }
 
+const mod = (n: number, m: number): number => { // https://stackoverflow.com/questions/4467539/javascript-modulo-gives-a-negative-result-for-negative-numbers
+    return ((n % m) + m) % m;
+}
+
 const renderCircle = (props: ConcentricCirclesProps, task: Task, tasks: Task[], radiusOffset: number): React.ReactElement|null => {
-    const radius = distributeAlongCurve(
-        0,
-        tasks.length - 1,
-        1,
-        maxRadius,
-        tasks.indexOf(task),
-    ) + radiusOffset;
+    const taskIndex = tasks.indexOf(task);
+    let radius = minRadius + taskIndex*snapRadiusStride + radiusOffset;
+
+    const currentSnapDistance = mod(radius - minRadius, snapRadiusStride);
+
+    if (currentSnapDistance <= snapDistance) {
+        radius -= currentSnapDistance;
+    } else if (currentSnapDistance >= snapRadiusStride - snapDistance) {
+        radius += snapRadiusStride - (currentSnapDistance);
+    }
 
     if (radius <= 0) {
         return null;
     }
 
     return (
-        // TODO: implement click and drag to move circles
         <TaskCircle
             key={task.uuid}
             task={task}
