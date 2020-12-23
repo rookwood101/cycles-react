@@ -2,6 +2,7 @@ import React  from 'react';
 import Task from './Task';
 import TaskCircle from './TaskCircle';
 import {clamp, distance} from 'popmotion'
+import useAnimationFrame from './useAnimationFrame';
 
 interface ConcentricCirclesProps {
     showTaskDetail: (task: Task) => (() => void),
@@ -18,7 +19,7 @@ const distributeAlongCurve = (inputMin: number, inputMax: number, outputMin: num
 }
 
 const renderCircle = (props: ConcentricCirclesProps, task: Task, tasks: Task[], radiusOffset: number): React.ReactElement|null => {
-    const radius = distributeAlongCurve(
+    let radius = distributeAlongCurve(
         0,
         tasks.length - 1,
         1,
@@ -27,7 +28,8 @@ const renderCircle = (props: ConcentricCirclesProps, task: Task, tasks: Task[], 
     ) + radiusOffset;
 
     if (radius <= 0) {
-        return null;
+        // return null;
+        radius = 0;
     }
 
     return (
@@ -93,6 +95,27 @@ const ConcentricCircles: React.FC<ConcentricCirclesProps> = (props) => {
     const [previousMouseEvent, setPreviousMouseEvent] = React.useState<React.MouseEvent|null>(null);
     const [radiusOffset, setRadiusOffset] = React.useState(0);
 
+    // coasting animation
+    const velocity = React.useRef(0);
+    const friction = 0.0001;
+
+    useAnimationFrame(deltaTime => {
+        const initialDirection = Math.sign(velocity.current);
+        velocity.current -= Math.sign(velocity.current) * friction * deltaTime;
+        const newDirection = Math.sign(velocity.current);
+        if (initialDirection !== newDirection) {
+            velocity.current = 0;
+        }
+        const currentVelocity = velocity.current;
+        // if (previousMouseEvent === null) {
+            setRadiusOffset((prev) => {
+                const beforeClamp = prev + deltaTime * currentVelocity;
+                const newRadiusOffset = clamp(-maxRadius, maxRadius, beforeClamp);
+                return newRadiusOffset;
+            });
+        // }
+    })
+
     const svgElement = React.useRef<SVGSVGElement|null>(null);
 
     const circles = tasks.map((task) => {
@@ -109,6 +132,7 @@ const ConcentricCircles: React.FC<ConcentricCirclesProps> = (props) => {
                     event.persist();
                     event.preventDefault();
                     setPreviousMouseEvent(event);
+                    velocity.current = 0;
                 }
             }}
             onMouseUp={(event) => {
@@ -122,10 +146,8 @@ const ConcentricCircles: React.FC<ConcentricCirclesProps> = (props) => {
                 }
                 event.persist()
                 setPreviousMouseEvent(event);
-                const delta = calculateRadiusOffsetDelta(event, previousMouseEvent, svgElement.current) ;
-                setRadiusOffset((prev) => {
-                    return clamp(-maxRadius, maxRadius, prev + delta);
-                });
+                const _delta = calculateRadiusOffsetDelta(event, previousMouseEvent, svgElement.current);
+                velocity.current += clamp(-0.02, 0.02, _delta * 0.002);
             }}
         >
             {circles}

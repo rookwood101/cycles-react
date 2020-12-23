@@ -73,7 +73,7 @@ const PercentageCircle: React.FC<PercentageCircleProps> = (props) => {
             <text
                 x={tipX}
                 y={tipY}
-                style={{fontSize: "3px"}}
+                style={{fontSize: "3px", userSelect: "none"}}
                 dominantBaseline="middle"
                 textAnchor="middle"
             >
