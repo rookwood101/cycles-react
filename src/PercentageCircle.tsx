@@ -57,8 +57,8 @@ const PercentageCircle: React.FC<PercentageCircleProps> = (props) => {
 
     return (
         <g
-            onMouseEnter={() => {setStrokeColour(hoverStrokeColour); props.onMouseEnter()}}
-            onMouseLeave={() => {setStrokeColour(defaultStrokeColour); props.onMouseLeave()}}
+            onPointerEnter={() => {setStrokeColour(hoverStrokeColour); props.onMouseEnter()}}
+            onPointerLeave={() => {setStrokeColour(defaultStrokeColour); props.onMouseLeave()}}
         >
             <path
                 d={`M ${xOffset} ${yOffset - props.radius}

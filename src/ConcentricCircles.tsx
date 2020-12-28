@@ -127,7 +127,7 @@ const ConcentricCircles: React.FC<ConcentricCirclesProps> = (props) => {
             ref={svgElement}
 
             viewBox={`0 0 ${viewBox} ${viewBox}`}
-            onMouseDown={(event) => {
+            onPointerDown={(event) => {
                 if( event.button === 0) {
                     event.persist();
                     event.preventDefault();
@@ -135,18 +135,22 @@ const ConcentricCircles: React.FC<ConcentricCirclesProps> = (props) => {
                     velocity.current = 0;
                 }
             }}
-            onMouseUp={(event) => {
+            onPointerUp={(event) => {
                 if (event.button === 0) {
                     setPreviousMouseEvent(null);
                 }
             }}
-            onMouseMove={(event) => {
+            onPointerMove={(event) => {
                 if (previousMouseEvent === null) {
                     return;
                 }
                 event.persist()
-                setPreviousMouseEvent(event);
+                // TODO: this works well on direct scrolling but bad on velocity scrolling
+                // setPreviousMouseEvent(event);
                 const _delta = calculateRadiusOffsetDelta(event, previousMouseEvent, svgElement.current);
+                // setRadiusOffset((prev) => {
+                //     return clamp(-maxRadius, maxRadius, prev + _delta);
+                // });
                 velocity.current += clamp(-0.02, 0.02, _delta * 0.002);
             }}
         >
