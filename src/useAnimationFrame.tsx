@@ -17,7 +17,7 @@ const useAnimationFrame = (callback: DeltaTimeCallback) => {
         totalTimeRef.current = totalTime;
         previousTimeRef.current = time;
         requestRef.current = requestAnimationFrame(animate);
-    }, [previousTimeRef, requestRef, totalTimeRef, callback]);
+    }, [previousTimeRef, requestRef, totalTimeRef]);
 
     React.useLayoutEffect(() => {
         requestRef.current = requestAnimationFrame(animate);
@@ -26,7 +26,7 @@ const useAnimationFrame = (callback: DeltaTimeCallback) => {
                 cancelAnimationFrame(requestRef.current);
             }
         }
-    }, [animate]); // Make sure the effect runs only once
+    }, []); // Make sure the effect runs only once
 }
 
 export default useAnimationFrame;

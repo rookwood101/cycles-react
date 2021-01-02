@@ -61,18 +61,17 @@ const domToSvgPoint = (svgElement: SVGSVGElement, [x, y]: [number, number]): [nu
     return [svgPoint.x, svgPoint.y]
 }
 
-const calculateRadiusOffsetDelta = (mouseMoveEvent: React.MouseEvent, previousMouseEvent: React.MouseEvent, svgElement: SVGSVGElement|null): number => {
+const calculateRadiusOffsetDelta = (start: PointerEvent, end: PointerEvent, svgElement: SVGSVGElement|null): number => {
     if (svgElement === null) {
         return 0;
     }
+    const startXDom = start.clientX;
+    const startYDom = start.clientY;
+    const endXDom = end.clientX;
+    const endYDom = end.clientY;
 
-    const startXDom = previousMouseEvent.clientX;
-    const startYDom = previousMouseEvent.clientY;
-    const endXDom = mouseMoveEvent.clientX;
-    const endYDom = mouseMoveEvent.clientY;
-
-    const [startXSvg, startYSvg] = domToSvgPoint(svgElement, [startXDom, startYDom])
-    const [endXSvg, endYSvg] = domToSvgPoint(svgElement, [endXDom, endYDom])
+    const [startXSvg, startYSvg] = domToSvgPoint(svgElement, [startXDom, startYDom]);
+    const [endXSvg, endYSvg] = domToSvgPoint(svgElement, [endXDom, endYDom]);
     const [centreXSvg, centreYSvg] = [positionOffset, positionOffset];
 
     const startToCentre = distance({x: startXSvg, y: startYSvg}, {x: centreXSvg, y: centreYSvg});
@@ -92,7 +91,7 @@ const ConcentricCircles: React.FC<ConcentricCirclesProps> = (props) => {
             (a, b) => a.regularity.asSeconds() - b.regularity.asSeconds()
         )
     );
-    const [previousMouseEvent, setPreviousMouseEvent] = React.useState<React.MouseEvent|null>(null);
+    const previousMouseEvent = React.useRef<PointerEvent|null>(null);
     const [radiusOffset, setRadiusOffset] = React.useState(0);
 
     // coasting animation
@@ -107,16 +106,52 @@ const ConcentricCircles: React.FC<ConcentricCirclesProps> = (props) => {
             velocity.current = 0;
         }
         const currentVelocity = velocity.current;
-        // if (previousMouseEvent === null) {
-            setRadiusOffset((prev) => {
-                const beforeClamp = prev + deltaTime * currentVelocity;
-                const newRadiusOffset = clamp(-maxRadius, maxRadius, beforeClamp);
-                return newRadiusOffset;
-            });
-        // }
-    })
+        setRadiusOffset((prev) => {
+            const beforeClamp = prev + deltaTime * currentVelocity;
+            const newRadiusOffset = clamp(-maxRadius, maxRadius, beforeClamp);
+            return newRadiusOffset;
+        });
+    });
 
     const svgElement = React.useRef<SVGSVGElement|null>(null);
+
+    const onPointerDown = (event: PointerEvent) => {
+        if (event.button === 0) {
+            event.preventDefault();
+            previousMouseEvent.current = event;
+            velocity.current = 0;
+        }
+    };
+    const onPointerUp = (event: PointerEvent) => {
+        if (event.button === 0) {
+            previousMouseEvent.current = null;
+        }
+    };
+    const onPointerMove = (event: PointerEvent) => {
+        if (previousMouseEvent.current === null) {
+            return;
+        }
+        event.preventDefault();
+        const _delta = calculateRadiusOffsetDelta(previousMouseEvent.current, event, svgElement.current);
+        previousMouseEvent.current = event;
+        // setRadiusOffset((prev) => {
+        //     return clamp(-maxRadius, maxRadius, prev + _delta);
+        // });
+        velocity.current += _delta * 0.01;
+    };
+
+    React.useEffect(() => {
+        document.body.addEventListener("pointerdown", onPointerDown);
+        document.body.addEventListener("pointerup", onPointerUp);
+        document.body.addEventListener("pointermove", onPointerMove);
+
+        return function cleanup() {
+            window.removeEventListener("pointerdown", onPointerDown);
+            window.removeEventListener("pointerup", onPointerUp);
+            window.removeEventListener("pointermove", onPointerMove);
+        } 
+    }, [])
+
 
     const circles = tasks.map((task) => {
         return renderCircle(props, task, tasks, radiusOffset);
@@ -125,34 +160,8 @@ const ConcentricCircles: React.FC<ConcentricCirclesProps> = (props) => {
     return (
         <svg
             ref={svgElement}
-
             viewBox={`0 0 ${viewBox} ${viewBox}`}
-            onPointerDown={(event) => {
-                if( event.button === 0) {
-                    event.persist();
-                    event.preventDefault();
-                    setPreviousMouseEvent(event);
-                    velocity.current = 0;
-                }
-            }}
-            onPointerUp={(event) => {
-                if (event.button === 0) {
-                    setPreviousMouseEvent(null);
-                }
-            }}
-            onPointerMove={(event) => {
-                if (previousMouseEvent === null) {
-                    return;
-                }
-                event.persist()
-                // TODO: this works well on direct scrolling but bad on velocity scrolling
-                // setPreviousMouseEvent(event);
-                const _delta = calculateRadiusOffsetDelta(event, previousMouseEvent, svgElement.current);
-                // setRadiusOffset((prev) => {
-                //     return clamp(-maxRadius, maxRadius, prev + _delta);
-                // });
-                velocity.current += clamp(-0.02, 0.02, _delta * 0.002);
-            }}
+            
         >
             {circles}
         </svg>
