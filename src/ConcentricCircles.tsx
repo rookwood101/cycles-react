@@ -91,6 +91,15 @@ const ConcentricCircles: React.FC<ConcentricCirclesProps> = (props) => {
             (a, b) => a.regularity.asSeconds() - b.regularity.asSeconds()
         )
     );
+    const [separation] = React.useState(
+        distributeAlongCurve(
+            0,
+            tasks.length - 1,
+            1,
+            maxRadius,
+            1,
+        )
+    );
     const previousMouseEvent = React.useRef<PointerEvent|null>(null);
     const [radiusOffset, setRadiusOffset] = React.useState(0);
 
@@ -98,20 +107,20 @@ const ConcentricCircles: React.FC<ConcentricCirclesProps> = (props) => {
     const velocity = React.useRef(0);
     const friction = 0.0001;
 
-    useAnimationFrame(deltaTime => {
-        const initialDirection = Math.sign(velocity.current);
-        velocity.current -= Math.sign(velocity.current) * friction * deltaTime;
-        const newDirection = Math.sign(velocity.current);
-        if (initialDirection !== newDirection) {
-            velocity.current = 0;
-        }
-        const currentVelocity = velocity.current;
-        setRadiusOffset((prev) => {
-            const beforeClamp = prev + deltaTime * currentVelocity;
-            const newRadiusOffset = clamp(-maxRadius, maxRadius, beforeClamp);
-            return newRadiusOffset;
-        });
-    });
+    // useAnimationFrame(deltaTime => {
+    //     const initialDirection = Math.sign(velocity.current);
+    //     velocity.current -= Math.sign(velocity.current) * friction * deltaTime;
+    //     const newDirection = Math.sign(velocity.current);
+    //     if (initialDirection !== newDirection) {
+    //         velocity.current = 0;
+    //     }
+    //     const currentVelocity = velocity.current;
+    //     setRadiusOffset((prev) => {
+    //         const beforeClamp = prev + deltaTime * currentVelocity;
+    //         const newRadiusOffset = clamp(-maxRadius, maxRadius, beforeClamp);
+    //         return newRadiusOffset;
+    //     });
+    // });
 
     const svgElement = React.useRef<SVGSVGElement|null>(null);
 
@@ -132,12 +141,9 @@ const ConcentricCircles: React.FC<ConcentricCirclesProps> = (props) => {
             return;
         }
         event.preventDefault();
-        const _delta = calculateRadiusOffsetDelta(previousMouseEvent.current, event, svgElement.current);
-        previousMouseEvent.current = event;
-        // setRadiusOffset((prev) => {
-        //     return clamp(-maxRadius, maxRadius, prev + _delta);
-        // });
-        velocity.current += _delta * 0.01;
+        const delta = calculateRadiusOffsetDelta(previousMouseEvent.current, event, svgElement.current);
+        setRadiusOffset((prev) => clamp(-maxRadius, maxRadius, prev + Math.sign(delta) * separation));
+        previousMouseEvent.current = null;
     };
 
     React.useEffect(() => {
