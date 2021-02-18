@@ -1,8 +1,9 @@
-import React  from 'react';
+import { FunctionalComponent, h, VNode } from 'preact';
 import Task from './Task';
 import TaskCircle from './TaskCircle';
 import {clamp, distance} from 'popmotion'
 import useAnimationFrame from './useAnimationFrame';
+import { useEffect, useRef, useState } from 'preact/hooks';
 
 interface ConcentricCirclesProps {
     showTaskDetail: (task: Task) => (() => void),
@@ -18,7 +19,7 @@ const distributeAlongCurve = (inputMin: number, inputMax: number, outputMin: num
     return (input - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin;
 }
 
-const renderCircle = (props: ConcentricCirclesProps, task: Task, tasks: Task[], radiusOffset: number): React.ReactElement|null => {
+const renderCircle = (props: ConcentricCirclesProps, task: Task, tasks: Task[], radiusOffset: number): VNode|null => {
     let radius = distributeAlongCurve(
         0,
         tasks.length - 1,
@@ -82,8 +83,8 @@ const calculateRadiusOffsetDelta = (start: PointerEvent, end: PointerEvent, svgE
     return radiusOffsetDelta;
 }
 
-const ConcentricCircles: React.FC<ConcentricCirclesProps> = (props) => {
-    const [tasks] = React.useState(
+const ConcentricCircles: FunctionalComponent<ConcentricCirclesProps> = (props) => {
+    const [tasks] = useState(
         Array.from(
             {length: 10},
             () => Task.randomTask()
@@ -91,11 +92,11 @@ const ConcentricCircles: React.FC<ConcentricCirclesProps> = (props) => {
             (a, b) => a.regularity.asSeconds() - b.regularity.asSeconds()
         )
     );
-    const previousMouseEvent = React.useRef<PointerEvent|null>(null);
-    const [radiusOffset, setRadiusOffset] = React.useState(0);
+    const previousMouseEvent = useRef<PointerEvent|null>(null);
+    const [radiusOffset, setRadiusOffset] = useState(0);
 
     // coasting animation
-    const velocity = React.useRef(0);
+    const velocity = useRef(0);
     const friction = 0.0001;
 
     useAnimationFrame(deltaTime => {
@@ -113,7 +114,7 @@ const ConcentricCircles: React.FC<ConcentricCirclesProps> = (props) => {
         });
     });
 
-    const svgElement = React.useRef<SVGSVGElement|null>(null);
+    const svgElement = useRef<SVGSVGElement|null>(null);
 
     const onPointerDown = (event: PointerEvent) => {
         if (event.button === 0) {
@@ -140,7 +141,7 @@ const ConcentricCircles: React.FC<ConcentricCirclesProps> = (props) => {
         velocity.current += _delta * 0.01;
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         document.body.addEventListener("pointerdown", onPointerDown);
         document.body.addEventListener("pointerup", onPointerUp);
         document.body.addEventListener("pointermove", onPointerMove);

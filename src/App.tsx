@@ -1,10 +1,11 @@
-import React from 'react';
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
 import ConcentricCircles from './ConcentricCircles';
 import Task from './Task';
 import TaskDetail from './TaskDetail';
 
 const App: React.FC<{}> = (props) => {
-    const [selectedTask, setSelectedTask] = React.useState<Task|null>(null);
+    const [selectedTask, setSelectedTask] = useState<Task|null>(null);
     return (
         <div className="App">
             <TaskDetail task={selectedTask}/>

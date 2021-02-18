@@ -1,11 +1,11 @@
-import React from 'react';
+import { FunctionalComponent, h } from 'preact';
 import Task from './Task';
 
 interface TaskDetailProps {
     task: Task | null,
 }
 
-const TaskDetail: React.FC<TaskDetailProps> = (props) => {
+const TaskDetail: FunctionalComponent<TaskDetailProps> = (props) => {
     if (props.task !== null) {
         return (
             <div style={{position: "absolute", top:0, left:0}}>

@@ -1,6 +1,7 @@
-import React from 'react';
+import { FunctionalComponent, h } from 'preact';
 import { keyframes, cubicBezier, Animation } from 'popmotion';
 import useAnimationFrame from './useAnimationFrame';
+import { useState } from 'preact/hooks';
 
 interface PercentageCircleProps {
     percentage: number,
@@ -41,12 +42,12 @@ const makePercentageAnimation = (target: number): Animation<number | string> => 
     });
 }
 
-const PercentageCircle: React.FC<PercentageCircleProps> = (props) => {
+const PercentageCircle: FunctionalComponent<PercentageCircleProps> = (props) => {
     console.log("rerender");
-    const [strokeColour, setStrokeColour] = React.useState(defaultStrokeColour);
+    const [strokeColour, setStrokeColour] = useState(defaultStrokeColour);
 
     const percentageAnimation = makePercentageAnimation(props.percentage);
-    const [animationPercentage, setAnimationPercentage] = React.useState(0);
+    const [animationPercentage, setAnimationPercentage] = useState(0);
     useAnimationFrame((_deltaTime, totalTime) => {
         const nextAnimationPercentage = percentageAnimation.next(totalTime);
         setAnimationPercentage(Number(nextAnimationPercentage.value));
@@ -66,16 +67,16 @@ const PercentageCircle: React.FC<PercentageCircleProps> = (props) => {
                     a ${props.radius} ${props.radius} 0 0 1 0 -${props.radius*2}`}
                 fill="none"
                 stroke={strokeColour}
-                strokeWidth={props.thickness}
-                strokeDasharray={percentageStrokeDashArray(props, animationPercentage)}
-                strokeLinecap="round"
+                stroke-width={props.thickness} // change to kebab case or use preact/compat
+                stroke-dasharray={percentageStrokeDashArray(props, animationPercentage)}
+                stroke-linecap="round"
             />
             <text
                 x={tipX}
                 y={tipY}
                 style={{fontSize: "3px", userSelect: "none"}}
-                dominantBaseline="middle"
-                textAnchor="middle"
+                dominant-baseline="middle"
+                text-anchor="middle"
             >
                 {props.text}
             </text>

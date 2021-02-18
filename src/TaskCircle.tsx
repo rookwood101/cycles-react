@@ -1,4 +1,4 @@
-import React from 'react';
+import { FunctionalComponent, h } from 'preact';
 import PercentageCircle from './PercentageCircle';
 import Task from './Task';
 
@@ -13,7 +13,7 @@ interface TaskCircleProps {
     onMouseLeave: () => void,
 }
 
-const TaskCircle: React.FC<TaskCircleProps> = (props) => {
+const TaskCircle: FunctionalComponent<TaskCircleProps> = (props) => {
     return (
         <PercentageCircle
             percentage={props.task.percentageElapsedSincePreviousOccurence()}
