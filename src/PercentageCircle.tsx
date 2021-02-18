@@ -67,7 +67,7 @@ const PercentageCircle: FunctionalComponent<PercentageCircleProps> = (props) => 
                     a ${props.radius} ${props.radius} 0 0 1 0 -${props.radius*2}`}
                 fill="none"
                 stroke={strokeColour}
-                stroke-width={props.thickness} // change to kebab case or use preact/compat
+                strokeWidth={props.thickness}
                 stroke-dasharray={percentageStrokeDashArray(props, animationPercentage)}
                 stroke-linecap="round"
             />
