@@ -1,6 +1,6 @@
 // From https://css-tricks.com/using-requestanimationframe-with-react-hooks/
 
-import { useCallback, useLayoutEffect, useRef } from "preact/hooks";
+import { useCallback, useLayoutEffect, useRef } from "react";
 
 type DeltaTimeCallback = (deltaTime: number, totalTime: number) => void;
 

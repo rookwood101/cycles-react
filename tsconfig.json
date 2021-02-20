@@ -18,7 +18,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "jsxFactory": "h",
+    "jsxFactory": "createElement",
   },
   "include": [
     "src"

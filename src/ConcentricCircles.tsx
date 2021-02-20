@@ -1,6 +1,5 @@
-import { FunctionalComponent, h, VNode } from 'preact';
+import { FunctionComponent, createElement, ReactElement, useEffect, useRef, useState } from 'react';
 import {clamp, distance} from 'popmotion'
-import { useEffect, useRef, useState } from 'preact/hooks';
 import { useSelector } from 'react-redux';
 import { RootState } from './redux/rootReducer';
 import Task, { durationUntil } from './Task';
@@ -21,7 +20,7 @@ const distributeAlongCurve = (inputMin: number, inputMax: number, outputMin: num
     return (input - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin;
 }
 
-const renderCircle = (props: ConcentricCirclesProps, task: Task, tasks: Task[], radiusOffset: number): VNode|null => {
+const renderCircle = (props: ConcentricCirclesProps, task: Task, tasks: Task[], radiusOffset: number): ReactElement|null => {
     let radius = distributeAlongCurve(
         0,
         tasks.length - 1,
@@ -83,7 +82,7 @@ const calculateRadiusOffsetDelta = (start: PointerEvent, end: PointerEvent, svgE
     return radiusOffsetDelta;
 }
 
-const ConcentricCircles: FunctionalComponent<ConcentricCirclesProps> = (props) => {
+const ConcentricCircles: FunctionComponent<ConcentricCirclesProps> = (props) => {
     const tasks = useSelector((state: RootState) => state.tasks.tasks.sort((a, b) => a.regularity - b.regularity));
     const previousMouseEvent = useRef<PointerEvent|null>(null);
     const [radiusOffset, setRadiusOffset] = useState(0);

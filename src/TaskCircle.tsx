@@ -1,4 +1,4 @@
-import { FunctionalComponent, h } from 'preact';
+import { FunctionComponent, createElement } from 'react';
 import { useDispatch } from 'react-redux';
 import PercentageCircle from './PercentageCircle';
 import { addTask, deleteTask } from './redux/tasksSlice';
@@ -15,7 +15,7 @@ interface TaskCircleProps {
     onMouseLeave: () => void,
 }
 
-const TaskCircle: FunctionalComponent<TaskCircleProps> = (props) => {
+const TaskCircle: FunctionComponent<TaskCircleProps> = (props) => {
     const dispatch = useDispatch();
 
     return (

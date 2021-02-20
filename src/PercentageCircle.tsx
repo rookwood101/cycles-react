@@ -1,7 +1,6 @@
-import { FunctionalComponent, h } from 'preact';
+import { FunctionComponent, createElement, useState } from 'react';
 import { keyframes, cubicBezier, Animation } from 'popmotion';
 import useAnimationFrame from './useAnimationFrame';
-import { useState } from 'preact/hooks';
 
 interface PercentageCircleProps {
     percentage: number,
@@ -43,7 +42,7 @@ const makePercentageAnimation = (target: number): Animation<number | string> => 
     });
 }
 
-const PercentageCircle: FunctionalComponent<PercentageCircleProps> = (props) => {
+const PercentageCircle: FunctionComponent<PercentageCircleProps> = (props) => {
     console.log("rerender");
     const [strokeColour, setStrokeColour] = useState(defaultStrokeColour);
 
@@ -69,16 +68,16 @@ const PercentageCircle: FunctionalComponent<PercentageCircleProps> = (props) => 
                     a ${props.radius} ${props.radius} 0 0 1 0 -${props.radius*2}`}
                 fill="none"
                 stroke={strokeColour}
-                stroke-width={props.thickness}
-                stroke-dasharray={percentageStrokeDashArray(props, animationPercentage)}
-                stroke-linecap="round"
+                strokeWidth={props.thickness}
+                strokeDasharray={percentageStrokeDashArray(props, animationPercentage)}
+                strokeLinecap="round"
             />
             <text
                 x={tipX}
                 y={tipY}
                 style={{fontSize: "3px", userSelect: "none"}}
-                dominant-baseline="middle"
-                text-anchor="middle"
+                dominantBaseline="middle"
+                textAnchor="middle"
             >
                 {props.text}
             </text>

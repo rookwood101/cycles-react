@@ -1,4 +1,4 @@
-import { FunctionalComponent, h } from 'preact';
+import { FunctionComponent, createElement } from 'react';
 import Task, { durationUntil } from './Task';
 import humanizeDuration from 'humanize-duration';
 import { DateTime } from 'luxon';
@@ -7,7 +7,7 @@ interface TaskDetailProps {
     task: Task | null,
 }
 
-const TaskDetail: FunctionalComponent<TaskDetailProps> = (props) => {
+const TaskDetail: FunctionComponent<TaskDetailProps> = (props) => {
     if (props.task !== null) {
         const nextOccurrenceFormatted = DateTime.fromMillis(props.task.firstOccurrence).toLocaleString({
             weekday: 'short', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
