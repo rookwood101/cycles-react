@@ -1,9 +1,11 @@
 import { FunctionalComponent, h, VNode } from 'preact';
-import Task from './Task';
-import TaskCircle from './TaskCircle';
 import {clamp, distance} from 'popmotion'
-import useAnimationFrame from './useAnimationFrame';
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { useSelector } from 'react-redux';
+import { RootState } from './redux/rootReducer';
+import Task, { durationUntil } from './Task';
+import TaskCircle from './TaskCircle';
+import useAnimationFrame from './useAnimationFrame';
 
 interface ConcentricCirclesProps {
     showTaskDetail: (task: Task) => (() => void),
@@ -29,12 +31,10 @@ const renderCircle = (props: ConcentricCirclesProps, task: Task, tasks: Task[], 
     ) + radiusOffset;
 
     if (radius <= 0) {
-        // return null;
         radius = 0;
     }
 
     return (
-        // TODO: implement click and drag to move circles
         <TaskCircle
             key={task.uuid}
             task={task}
@@ -45,7 +45,7 @@ const renderCircle = (props: ConcentricCirclesProps, task: Task, tasks: Task[], 
                 1,
                 0.5,
                 maxStrokeWidth,
-                (task.regularity.asSeconds() - task.durationUntil().asSeconds()) / task.regularity.asSeconds(),
+                (task.regularity - durationUntil(task)) / task.regularity,
             )}
             onMouseEnter={props.showTaskDetail(task)}
             onMouseLeave={props.hideTaskDetail}
@@ -84,14 +84,7 @@ const calculateRadiusOffsetDelta = (start: PointerEvent, end: PointerEvent, svgE
 }
 
 const ConcentricCircles: FunctionalComponent<ConcentricCirclesProps> = (props) => {
-    const [tasks] = useState(
-        Array.from(
-            {length: 10},
-            () => Task.randomTask()
-        ).sort(
-            (a, b) => a.regularity.asSeconds() - b.regularity.asSeconds()
-        )
-    );
+    const tasks = useSelector((state: RootState) => state.tasks.tasks.sort((a, b) => a.regularity - b.regularity));
     const previousMouseEvent = useRef<PointerEvent|null>(null);
     const [radiusOffset, setRadiusOffset] = useState(0);
 

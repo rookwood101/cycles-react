@@ -11,6 +11,7 @@ interface PercentageCircleProps {
     text: string,
     onMouseEnter: () => void,
     onMouseLeave: () => void,
+    onMouseDown: () => void,
 }
 
 const defaultStrokeColour = "lightgrey";
@@ -60,6 +61,7 @@ const PercentageCircle: FunctionalComponent<PercentageCircleProps> = (props) => 
         <g
             onPointerEnter={() => {setStrokeColour(hoverStrokeColour); props.onMouseEnter()}}
             onPointerLeave={() => {setStrokeColour(defaultStrokeColour); props.onMouseLeave()}}
+            onPointerUp={props.onMouseDown}
         >
             <path
                 d={`M ${xOffset} ${yOffset - props.radius}

@@ -1,38 +1,31 @@
-import moment from 'moment';
 import {v4 as uuidv4} from 'uuid';
 import faker from 'faker';
 
-export default class Task {
-    public readonly description: string;
-    public readonly regularity: moment.Duration;
-    public readonly nextOccurence: moment.Moment;
-    public readonly uuid: string;
+export default interface Task {
+    readonly uuid: string
+    readonly description: string
+    readonly firstOccurrence: number
+    readonly regularity: number
+}
 
-    public constructor(description: string, regularity: moment.Duration, nextOccurence: moment.Moment) {
-        this.description = description;
-        this.regularity = regularity;
-        this.nextOccurence = nextOccurence;
-        this.uuid = uuidv4();
-    }
+export const randomTask = (): Task => {
+    const nowInMs = new Date().getTime()
+    const upTo1MonthDurationInMs = faker.random.number(30*24*60*60*1000)
+    const upToDuration = nowInMs + faker.random.number(upTo1MonthDurationInMs);
 
-    public readonly durationUntil = (): moment.Duration => {
-        return moment.duration(this.nextOccurence.diff(moment.now()));
-    }
+    return {
+        uuid: uuidv4(),
+        description: faker.random.arrayElement([..."🎫🧺🛶🎶💻🧭💃⚽"]),
+        firstOccurrence: upToDuration,
+        regularity: upTo1MonthDurationInMs,
+    };
+}
 
-    public readonly percentageElapsedSincePreviousOccurence = (): number => {
-        const regularity = this.regularity.asMilliseconds();
-        const durationUntil = this.durationUntil().asMilliseconds();
-        return (regularity - durationUntil) / regularity * 100;
-    }
+export const durationUntil = (task: Task): number => {
+    return task.firstOccurrence - new Date().getTime();
+}
 
-    public static randomTask() {
-        const upTo1MonthDuration = moment.duration(faker.random.number(30*24*60), "minutes");
-        const upToDuration = moment(faker.date.between(moment().toDate(), moment().add(upTo1MonthDuration).toDate()));
-
-        return new Task(
-            faker.random.arrayElement([..."🎫🧺🛶🎶💻🧭💃⚽"]),
-            upTo1MonthDuration,
-            upToDuration,
-        );
-    }
+export const percentageElapsedSincePreviousOccurrence = (task: Task): number => {
+    const regularity = task.regularity;
+    return (regularity - durationUntil(task)) / regularity * 100;
 }

@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@types/faker": "^4.1.12",
-    "@types/node": "^12.20.1",
-    "@types/uuid": "^8.3.0",
+    "@reduxjs/toolkit": "^1.5.0",
     "faker": "^4.1.0",
-    "moment": "^2.29.1",
+    "humanize-duration": "^3.25.1",
+    "luxon": "^1.26.0",
     "popmotion": "^9.1.0",
     "preact": "^10.5.12",
+    "react-redux": "^7.2.2",
     "typescript": "^3.9.9",
     "uuid": "^8.3.2"
   },
@@ -35,6 +35,16 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.17",
+    "@types/faker": "^4.1.12",
+    "@types/humanize-duration": "^3.18.1",
+    "@types/luxon": "^1.26.0",
+    "@types/node": "^12.20.1",
+    "@types/react-redux": "^7.1.16",
+    "@types/uuid": "^8.3.0",
     "parcel-bundler": "^1.12.4"
+  },
+  "alias": {
+    "react": "preact/compat",
+    "react-dom": "preact/compat"
   }
 }
