@@ -18,7 +18,7 @@ export const randomTask = (): Task => {
         description: faker.random.arrayElement([..."🎫🧺🛶🎶💻🧭💃⚽"]),
         firstOccurrence: upToDuration,
         regularity: upTo1MonthDurationInMs,
-    };
+    }
 }
 
 export const durationUntil = (task: Task): number => {

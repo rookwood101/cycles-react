@@ -83,7 +83,7 @@ const calculateRadiusOffsetDelta = (start: PointerEvent, end: PointerEvent, svgE
 }
 
 const ConcentricCircles: FunctionComponent<ConcentricCirclesProps> = (props) => {
-    const tasks = useSelector((state: RootState) => state.tasks.tasks.sort((a, b) => a.regularity - b.regularity));
+    const tasks = useSelector((state: RootState) => [...state.tasks.tasks].sort((a, b) => a.regularity - b.regularity));
     const previousMouseEvent = useRef<PointerEvent|null>(null);
     const [radiusOffset, setRadiusOffset] = useState(0);
 

@@ -28,7 +28,7 @@ const TaskCircle: FunctionComponent<TaskCircleProps> = (props) => {
             text={props.task.description}
             onMouseEnter={props.onMouseEnter}
             onMouseLeave={props.onMouseLeave}
-            onMouseDown={() => dispatch(addTask(randomTask()))}
+            onMouseDown={() => dispatch(deleteTask(props.task.uuid))}
         />
     );
 }
