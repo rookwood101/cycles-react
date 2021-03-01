@@ -1,6 +1,7 @@
 import { FunctionComponent, createElement, ReactElement, useEffect, useRef, useState } from 'react';
 import {clamp, distance} from 'popmotion'
 import { useSelector } from 'react-redux';
+import _ from 'lodash';
 import { RootState } from './redux/rootReducer';
 import Task, { durationUntil } from './Task';
 import TaskCircle from './TaskCircle';
@@ -134,16 +135,18 @@ const ConcentricCircles: FunctionComponent<ConcentricCirclesProps> = (props) => 
     };
 
     useEffect(() => {
-        document.body.addEventListener("pointerdown", onPointerDown);
-        document.body.addEventListener("pointerup", onPointerUp);
-        document.body.addEventListener("pointermove", onPointerMove);
+        if (svgElement.current !== null) {
+            svgElement.current.addEventListener("pointerdown", onPointerDown);
+            svgElement.current.addEventListener("pointerup", onPointerUp);
+            svgElement.current.addEventListener("pointermove", onPointerMove);
+        }
 
         return function cleanup() {
             window.removeEventListener("pointerdown", onPointerDown);
             window.removeEventListener("pointerup", onPointerUp);
             window.removeEventListener("pointermove", onPointerMove);
         } 
-    }, [])
+    }, [svgElement])
 
 
     const circles = tasks.map((task) => {
