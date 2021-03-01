@@ -2,7 +2,7 @@ import { FunctionComponent, createElement } from 'react';
 import { useDispatch } from 'react-redux';
 import PercentageCircle from './PercentageCircle';
 import { addTask, deleteTask } from './redux/tasksSlice';
-import Task, { percentageElapsedSincePreviousOccurrence, randomTask } from './Task';
+import Task, { percentageElapsedSincePreviousOccurrence, randomTask } from './domain/Task';
 
 interface TaskCircleProps {
     task: Task,

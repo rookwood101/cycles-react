@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import Task, { randomTask } from '../Task';
+import Task, { randomTask } from '../domain/Task';
 
 
 
