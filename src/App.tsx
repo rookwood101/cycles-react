@@ -3,13 +3,13 @@ import { useDispatch } from 'react-redux';
 import AddTaskModal from './AddTaskModal';
 import ConcentricCircles from './ConcentricCircles';
 import { addTask } from './redux/tasksSlice';
-import Task, { randomTask } from './domain/Task';
+import { CachedTask } from './domain/Task';
 import TaskDetail from './TaskDetail';
 
 const App: React.FC<{}> = (props) => {
     const dispatch = useDispatch();
     const [isModalOpen, setModalOpen] = useState<boolean>(false);
-    const [selectedTask, setSelectedTask] = useState<Task|null>(null);
+    const [selectedTask, setSelectedTask] = useState<CachedTask|null>(null);
     return (
         <div className="App">
             <button onClick={() => setModalOpen(true)}>Add Task</button>
@@ -23,7 +23,7 @@ const App: React.FC<{}> = (props) => {
             />
             <TaskDetail task={selectedTask}/>
             <ConcentricCircles
-                showTaskDetail={(task: Task) => () => {setSelectedTask(task)}}
+                showTaskDetail={(task: CachedTask) => () => {setSelectedTask(task)}}
                 hideTaskDetail={() => setSelectedTask(null)}
             />
         </div>

@@ -15,7 +15,7 @@ export const randomSchedule = (): Schedule => {
         startTime: DateTime.fromMillis(twoMonthWindow).toISODate(),
         repetitionRule: {
             periodicity: faker.random.arrayElement(["day", "week", "day of month", "week of month", "year"]),
-            multiple: faker.random.number(12),
+            multiple: faker.random.number({min: 1, max: 12}),
         }
     }
 }
@@ -50,7 +50,7 @@ interface YearRepetition extends Repetition {
     periodicity: "year"
 }
 
-// TODO: USE rSchedule
+// TODO: USE rSchedule?
 
 const repeatFunction = (schedule: Schedule, step: number = 1): ((dateTime: DateTime) => DateTime) => {
     const periodicity = schedule.repetitionRule.periodicity
@@ -121,3 +121,4 @@ export const previousOccurrenceIgnoreStart = (beforeTimestamp: number, schedule:
 
     return previous?.toMillis() ?? prevFn(scheduleStart).toMillis()
 }
+

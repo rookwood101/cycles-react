@@ -3,12 +3,12 @@ import {clamp, distance} from 'popmotion'
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
 import { RootState } from './redux/rootReducer';
-import Task, { durationUntil, intervalBetweenOccurrences, percentageElapsedSincePreviousOccurrence } from './domain/Task';
+import Task, { CachedTask, cacheTask } from './domain/Task';
 import TaskCircle from './TaskCircle';
 import useAnimationFrame from './useAnimationFrame';
 
 interface ConcentricCirclesProps {
-    showTaskDetail: (task: Task) => (() => void),
+    showTaskDetail: (task: CachedTask) => (() => void),
     hideTaskDetail: () => void,
 }
 
@@ -21,7 +21,7 @@ const distributeAlongCurve = (inputMin: number, inputMax: number, outputMin: num
     return (input - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin;
 }
 
-const renderCircle = (props: ConcentricCirclesProps, task: Task, tasks: Task[], radiusOffset: number): ReactElement|null => {
+const renderCircle = (props: ConcentricCirclesProps, task: CachedTask, tasks: CachedTask[], radiusOffset: number): ReactElement|null => {
     let radius = distributeAlongCurve(
         0,
         tasks.length - 1,
@@ -45,7 +45,7 @@ const renderCircle = (props: ConcentricCirclesProps, task: Task, tasks: Task[], 
                 1,
                 0.5,
                 maxStrokeWidth,
-                percentageElapsedSincePreviousOccurrence(task),
+                task.fractionOfCycle,
             )}
             onMouseEnter={props.showTaskDetail(task)}
             onMouseLeave={props.hideTaskDetail}
@@ -84,7 +84,9 @@ const calculateRadiusOffsetDelta = (start: PointerEvent, end: PointerEvent, svgE
 }
 
 const ConcentricCircles: FunctionComponent<ConcentricCirclesProps> = (props) => {
-    const tasks = useSelector((state: RootState) => _.sortBy(state.tasks.tasks, (task) => intervalBetweenOccurrences(task)));
+    const tasks = useSelector((state: RootState) => (
+        _.sortBy(state.tasks.tasks.map((task) => cacheTask(task)), (task) => task.intervalBetween)
+    ));
     const previousMouseEvent = useRef<PointerEvent|null>(null);
     const [radiusOffset, setRadiusOffset] = useState(0);
 

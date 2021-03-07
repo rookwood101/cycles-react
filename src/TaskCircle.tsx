@@ -1,11 +1,11 @@
 import { FunctionComponent, createElement } from 'react';
 import { useDispatch } from 'react-redux';
 import PercentageCircle from './PercentageCircle';
-import { addTask, deleteTask } from './redux/tasksSlice';
-import Task, { percentageElapsedSincePreviousOccurrence, randomTask } from './domain/Task';
+import { deleteTask } from './redux/tasksSlice';
+import { CachedTask } from './domain/Task';
 
 interface TaskCircleProps {
-    task: Task,
+    task: CachedTask,
 
     radius: number,
     positionOffset: [number, number],
@@ -20,7 +20,7 @@ const TaskCircle: FunctionComponent<TaskCircleProps> = (props) => {
 
     return (
         <PercentageCircle
-            percentage={percentageElapsedSincePreviousOccurrence(props.task)}
+            percentage={props.task.fractionOfCycle*100}
             radius={props.radius}
             positionOffset={props.positionOffset}
             thickness={props.thickness}
