@@ -14,7 +14,7 @@ export const randomSchedule = (): Schedule => {
     return {
         startTime: DateTime.fromMillis(twoMonthWindow).toISODate(),
         repetitionRule: {
-            periodicity: faker.random.arrayElement(["day", "week", "day of month", "week of month", "year"]),
+            periodicity: faker.random.arrayElement(["day", "week", "day of month", "weekday of month", "year"]),
             multiple: faker.random.number({min: 1, max: 12}),
         }
     }
@@ -26,9 +26,6 @@ interface Repetition {
     readonly periodicity: string
     readonly multiple: number
 }
-
-// type DayOfWeek = "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday"
-// type DayOfMonth = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31
 
 interface DayRepetition extends Repetition {
     periodicity: "day"
@@ -43,14 +40,17 @@ interface DayOfMonthRepetition extends Repetition {
 }
 
 interface WeekOfMonthRepetition extends Repetition {
-    periodicity: "week of month"
+    periodicity: "weekday of month"
 }
 
 interface YearRepetition extends Repetition {
     periodicity: "year"
 }
 
-// TODO: USE rSchedule?
+const weekLength = 7
+const weekdayOfMonth = (dateTime: DateTime): number => {
+    return Math.ceil(1.0 * dateTime.day / weekLength)
+}
 
 const repeatFunction = (schedule: Schedule, step: number = 1): ((dateTime: DateTime) => DateTime) => {
     const periodicity = schedule.repetitionRule.periodicity
@@ -63,12 +63,10 @@ const repeatFunction = (schedule: Schedule, step: number = 1): ((dateTime: DateT
             return (dateTime) => dateTime.plus({ weeks: multiple })
         case "day of month":
             return (dateTime) => dateTime.plus({ months: multiple })
-        case "week of month":
+        case "weekday of month":
             return (dateTime) => {
-                const weekLength = 7
-                let weekOfMonth = Math.ceil(1.0 * dateTime.day / weekLength)
                 const monday = dateTime.plus({ months: multiple }).startOf("month").startOf("week")
-                return monday.plus({ days: (dateTime.weekday - monday.weekday) + weekLength * (weekOfMonth - 1) })
+                return monday.plus({ days: (dateTime.weekday - monday.weekday) + weekLength * (weekdayOfMonth(dateTime) - 1) })
             }
         case "year":
             return (dateTime) => dateTime.plus({ years: multiple })
@@ -122,3 +120,38 @@ export const previousOccurrenceIgnoreStart = (beforeTimestamp: number, schedule:
     return previous?.toMillis() ?? prevFn(scheduleStart).toMillis()
 }
 
+const appendOrdinal = (n: number): string => {
+    const j = n % 10;
+    const k = n % 100;
+    if (j === 1 && k !== 11) {
+        return n + "st";
+    }
+    if (j === 2 && k !== 12) {
+        return n + "nd";
+    }
+    if (j === 3 && k !== 13) {
+        return n + "rd";
+    }
+    return n + "th"; 
+}
+
+export const prettyPrintRepetitionRule = (schedule: Schedule): string => {
+    const periodicity = schedule.repetitionRule.periodicity
+    const start = DateTime.fromISO(schedule.startTime)
+    const n = schedule.repetitionRule.multiple
+
+    switch (periodicity) {
+        case "day":
+            return n === 1 ? `day` : `${n} days`
+        case "week":
+            return n === 1 ? start.weekdayLong : `${n} ${start.weekdayLong}s`
+        case "day of month":
+            return n === 1 ? `month` : `${n} months`
+        case "weekday of month":
+            return (n === 1 ? `month` : `${n} months`) + ` on the ${appendOrdinal(weekdayOfMonth(start))} ${start.weekdayLong}`
+        case "year":
+            return n === 1 ? `year` : `${n} years`
+        default:
+            return unreachableCase(periodicity)
+    }
+}
