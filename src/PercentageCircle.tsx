@@ -1,4 +1,4 @@
-import { FunctionComponent, createElement, useState } from 'react';
+import { FunctionComponent, createElement, useState, PointerEventHandler } from 'react';
 import { keyframes, cubicBezier, Animation } from 'popmotion';
 import useAnimationFrame from './useAnimationFrame';
 
@@ -8,9 +8,9 @@ interface PercentageCircleProps {
     positionOffset: [number, number],
     thickness: number,
     text: string,
-    onMouseEnter: () => void,
-    onMouseLeave: () => void,
-    onMouseDown: () => void,
+    onMouseEnter: PointerEventHandler<{}>,
+    onMouseLeave: PointerEventHandler<{}>,
+    onMouseDown: PointerEventHandler<{}>,
 }
 
 const defaultStrokeColour = "lightgrey";
@@ -58,8 +58,8 @@ const PercentageCircle: FunctionComponent<PercentageCircleProps> = (props) => {
 
     return (
         <g
-            onPointerEnter={() => {setStrokeColour(hoverStrokeColour); props.onMouseEnter()}}
-            onPointerLeave={() => {setStrokeColour(defaultStrokeColour); props.onMouseLeave()}}
+            onPointerEnter={(e) => {setStrokeColour(hoverStrokeColour); props.onMouseEnter(e)}}
+            onPointerLeave={(e) => {setStrokeColour(defaultStrokeColour); props.onMouseLeave(e)}}
             onPointerUp={props.onMouseDown}
         >
             <path

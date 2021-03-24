@@ -4,7 +4,10 @@ import { createElement, FormEvent, FunctionComponent, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import {v4 as uuidV4} from 'uuid';
 import produce from 'immer'
+import 'emoji-mart/css/emoji-mart.css'
+import { BaseEmoji, Picker } from 'emoji-mart'
 
+import './emoji-mart-overrides.css'
 import Task, { randomTask } from "./domain/Task";
 import { appendOrdinal, periodicities, RepetitionRule, weekdayOfMonth } from './domain/Schedule';
 
@@ -47,7 +50,7 @@ const parseFormState = (state: FormState): ParsedFormState => {
         emoji: state.emoji !== "" ? state.emoji : null,
         startDateTime: startDateTime.isValid ? startDateTime : null,
         multiple: /^[1-9]\d*$/.test(state.multiple) ? Number(state.multiple) : null,
-        periodicity: periodicities.includes(state.periodicity) ? state.periodicity as RepetitionRule["periodicity"] : null,
+        periodicity: (periodicities as readonly string[]).includes(state.periodicity) ? state.periodicity as RepetitionRule["periodicity"] : null,
     }
 }
 
@@ -83,7 +86,6 @@ const AddTaskModal: FunctionComponent<Props> = (props) => {
                     periodicity: parsedFormState.periodicity!,
                 }
             }
-            // schedule: {}
         })
         setFormState(initialFormState)
         setValidated(false)
@@ -106,7 +108,8 @@ const AddTaskModal: FunctionComponent<Props> = (props) => {
                 <Modal.Body>
                         <Form.Group>
                             <Form.Label>Emoji</Form.Label>
-                            <Form.Control type="text" value={formState.emoji} onChange={(e) => updateFormState("emoji", e.target.value)} required htmlSize={1}/>
+                            <Form.Control type="text" value={formState.emoji} onChange={(e) => updateFormState("emoji", e.target.value)} required style={{textAlign: "center", fontSize: "200%"}} placeholder="Pick an emoji below"/>
+                            <Picker native emojiTooltip={true} title="" emoji="" style={{width: "100%", border: "none", marginTop: "3px"}} onSelect={(emoji) => updateFormState("emoji", "native" in emoji ? emoji.native : "❔")} />
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Description</Form.Label>
@@ -125,14 +128,14 @@ const AddTaskModal: FunctionComponent<Props> = (props) => {
                         <Form.Label>Repeat every</Form.Label>
                         <Form.Row>
                             <Form.Group>
-                                <Form.Control type="number" value={formState.multiple} onChange={(e) => updateFormState("multiple", e.target.value)} min={1} placeholder="n"/>
+                                <Form.Control type="number" value={formState.multiple} onChange={(e) => updateFormState("multiple", e.target.value)} min={1} placeholder="n" htmlSize={3}/>
                             </Form.Group>
                             <Form.Group>
                                 <Form.Control as="select" value={formState.periodicity} onChange={(e) => updateFormState("periodicity", e.target.value)} disabled={startDateTime === null}>
                                     <option value="day">{pluralise("day")}</option>
                                     <option value="week">{pluralise("week")} on the {startDateTime?.weekdayLong ?? "Monday"}</option>
                                     <option value="day of month">{pluralise("month")} on the {appendOrdinal(startDateTime?.day ?? 1)}</option>
-                                    <option value="weekday of month">{pluralise("month")} on the {appendOrdinal(startDateTime !== null ? weekdayOfMonth(startDateTime) : 1)} {startDateTime?.weekdayLong ?? "Monday"}</option>
+                                    <option value="weekday of month">{pluralise("month")} on the {appendOrdinal(startDateTime !== null ? weekdayOfMonth(startDateTime) : 1)} of {startDateTime?.weekdayLong ?? "Monday"}</option>
                                     <option value="year">{pluralise("year")} on the {appendOrdinal(startDateTime?.day ?? 1)} {startDateTime?.monthLong ?? "January"}</option>
                                 </Form.Control>
                             </Form.Group>

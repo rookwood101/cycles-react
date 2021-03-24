@@ -1,0 +1,7 @@
+.emoji-mart-preview {
+    display: none;
+}
+
+.emoji-mart [aria-label="Frequently Used"] {
+    display: none;
+}
