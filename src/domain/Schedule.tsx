@@ -11,44 +11,38 @@ export const randomSchedule = (): Schedule => {
     const nowInMs = DateTime.now().toMillis()
     const upTo1MonthDurationInMs = faker.random.number(30*24*60*60*1000)
     const twoMonthWindow = nowInMs - upTo1MonthDurationInMs + faker.random.number(2 * upTo1MonthDurationInMs)
+    const typicalRanges = new Map([
+        ["day", [1, 14]],
+        ["week", [1, 8]],
+        ["day of month", [1, 18]],
+        ["weekday of month", [1, 2]],
+        ["year", [1, 4]],
+    ])
+    const periodicity = faker.random.arrayElement(Array.from(typicalRanges.keys()))
     return {
         startTime: DateTime.fromMillis(twoMonthWindow).toISODate(),
         repetitionRule: {
-            periodicity: faker.random.arrayElement(["day", "week", "day of month", "weekday of month", "year"]),
-            multiple: faker.random.number({min: 1, max: 12}),
+            periodicity: periodicity as RepetitionRule["periodicity"],
+            multiple: faker.random.number({min: typicalRanges.get(periodicity)![0], max: typicalRanges.get(periodicity)![1]}),
         }
     }
 }
 
-type RepetitionRule = DayRepetition | WeekRepetition | DayOfMonthRepetition | WeekOfMonthRepetition | YearRepetition
+export const periodicities = [
+    "day",
+    "week",
+    "day of month",
+    "weekday of month",
+    "year",
+] as const
 
-interface Repetition {
-    readonly periodicity: string
+export interface RepetitionRule {
+    readonly periodicity: typeof periodicities[number]
     readonly multiple: number
 }
 
-interface DayRepetition extends Repetition {
-    periodicity: "day"
-}
-
-interface WeekRepetition extends Repetition {
-    periodicity: "week"
-}
-
-interface DayOfMonthRepetition extends Repetition {
-    periodicity: "day of month"
-}
-
-interface WeekOfMonthRepetition extends Repetition {
-    periodicity: "weekday of month"
-}
-
-interface YearRepetition extends Repetition {
-    periodicity: "year"
-}
-
 const weekLength = 7
-const weekdayOfMonth = (dateTime: DateTime): number => {
+export const weekdayOfMonth = (dateTime: DateTime): number => {
     return Math.ceil(1.0 * dateTime.day / weekLength)
 }
 
@@ -120,7 +114,7 @@ export const previousOccurrenceIgnoreStart = (beforeTimestamp: number, schedule:
     return previous?.toMillis() ?? prevFn(scheduleStart).toMillis()
 }
 
-const appendOrdinal = (n: number): string => {
+export const appendOrdinal = (n: number): string => {
     const j = n % 10;
     const k = n % 100;
     if (j === 1 && k !== 11) {

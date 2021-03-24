@@ -9,7 +9,7 @@ type TasksState = {
 
 let initialState: TasksState = {
     tasks: Array.from(
-        {length: 10},
+        {length: 2},
         () => randomTask()
     )
 }

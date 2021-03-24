@@ -5,15 +5,16 @@ import { DateTime } from 'luxon';
 
 export default interface Task {
     readonly uuid: string
+    readonly emoji: string
     readonly description: string
     readonly schedule: Schedule
 }
 
-export type CachedTask = {
+export interface CachedTask extends Task {
     readonly durationUntil: number,
     readonly intervalBetween: number
     readonly fractionOfCycle: number
-} & Task
+}
 
 export const cacheTask = (task: Task): CachedTask => {
     return {
@@ -24,11 +25,11 @@ export const cacheTask = (task: Task): CachedTask => {
     }
 }
 
-
 export const randomTask = (): Task => {
     return {
         uuid: uuidV4(),
-        description: faker.random.arrayElement([..."🎫🧺🛶🎶💻🧭💃⚽"]),
+        emoji: faker.random.arrayElement([..."🎫🧺🛶🎶💻🧭💃⚽"]),
+        description: faker.random.words(3),
         schedule: randomSchedule()
     }
 }
