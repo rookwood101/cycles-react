@@ -1,7 +1,6 @@
 import { FunctionComponent, createElement, ReactElement, useEffect, useRef, useState } from 'react';
 import {clamp, distance} from 'popmotion'
 import { useSelector } from 'react-redux';
-import _ from 'lodash';
 import { RootState } from './redux/rootReducer';
 import Task, { CachedTask, cacheTask } from './domain/Task';
 import TaskCircle from './TaskCircle';
@@ -85,7 +84,7 @@ const calculateRadiusOffsetDelta = (start: PointerEvent, end: PointerEvent, svgE
 
 const ConcentricCircles: FunctionComponent<ConcentricCirclesProps> = (props) => {
     const tasks = useSelector((state: RootState) => (
-        _.sortBy(state.tasks.tasks.map((task) => cacheTask(task)), (task) => task.intervalBetween)
+        state.tasks.tasks.map((task) => cacheTask(task)).slice().sort((a, b) => a.intervalBetween - b.intervalBetween)
     ));
     const previousMouseEvent = useRef<PointerEvent|null>(null);
     const [radiusOffset, setRadiusOffset] = useState(0);

@@ -1,4 +1,3 @@
-import faker from "faker";
 import { DateTime } from "luxon";
 import { unreachableCase } from "ts-assert-unreachable";
 
@@ -8,22 +7,22 @@ export default interface Schedule {
 }
 
 export const randomSchedule = (): Schedule => {
-    const nowInMs = DateTime.now().toMillis()
-    const upTo1MonthDurationInMs = faker.random.number(30*24*60*60*1000)
-    const twoMonthWindow = nowInMs - upTo1MonthDurationInMs + faker.random.number(2 * upTo1MonthDurationInMs)
-    const typicalRanges = new Map([
+    const typicalRanges: Map<RepetitionRule["periodicity"], [number, number]> = new Map([
         ["day", [1, 14]],
         ["week", [1, 8]],
         ["day of month", [1, 18]],
         ["weekday of month", [1, 2]],
         ["year", [1, 4]],
     ])
-    const periodicity = faker.random.arrayElement(Array.from(typicalRanges.keys()))
+    const periodicity = [...typicalRanges.keys()][Math.floor(Math.random() * typicalRanges.size)]
+    const multipleRange = typicalRanges.get(periodicity)!
+    const start = DateTime.now().minus({ months: 1 }).toMillis()
+    const end = DateTime.now().plus({ months: 1 }).toMillis()
     return {
-        startTime: DateTime.fromMillis(twoMonthWindow).toISODate(),
+        startTime: DateTime.fromMillis(start + Math.random() * (end-start)).toISODate(),
         repetitionRule: {
-            periodicity: periodicity as RepetitionRule["periodicity"],
-            multiple: faker.random.number({min: typicalRanges.get(periodicity)![0], max: typicalRanges.get(periodicity)![1]}),
+            periodicity: periodicity,
+            multiple: multipleRange[0] + Math.floor(Math.random() * (multipleRange[1] - multipleRange[0])),
         }
     }
 }

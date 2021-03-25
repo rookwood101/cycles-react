@@ -5,7 +5,7 @@ import { Button, Form, Modal } from "react-bootstrap";
 import {v4 as uuidV4} from 'uuid';
 import produce from 'immer'
 import 'emoji-mart/css/emoji-mart.css'
-import { BaseEmoji, Picker } from 'emoji-mart'
+import { Picker } from 'emoji-mart'
 
 import './emoji-mart-overrides.css'
 import Task, { randomTask } from "./domain/Task";

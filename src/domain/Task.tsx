@@ -1,5 +1,4 @@
 import {v4 as uuidV4} from 'uuid';
-import faker from 'faker';
 import Schedule, { nextOccurrence , previousOccurrenceIgnoreStart, randomSchedule } from './Schedule';
 import { DateTime } from 'luxon';
 
@@ -25,11 +24,13 @@ export const cacheTask = (task: Task): CachedTask => {
     }
 }
 
+const emojis = [..."😂❤️😍🤣😊🙏💕😭😘👍"]
+
 export const randomTask = (): Task => {
     return {
         uuid: uuidV4(),
-        emoji: faker.random.arrayElement([..."🎫🧺🛶🎶💻🧭💃⚽"]),
-        description: faker.random.words(3),
+        emoji: emojis[Math.floor(Math.random() * emojis.length)],
+        description: "Lorem ipsum",
         schedule: randomSchedule()
     }
 }
