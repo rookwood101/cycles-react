@@ -7,6 +7,7 @@
     "bootstrap": "^4.6.0",
     "emoji": "^0.3.2",
     "emoji-mart": "^3.0.1",
+    "esbuild": "^0.10.0",
     "faker": "^4.1.0",
     "humanize-duration": "^3.25.1",
     "lodash": "^4.17.21",
@@ -22,9 +23,8 @@
     "uuid": "^8.3.2"
   },
   "scripts": {
-    "start": "parcel src/index.html",
-    "prebuild": "rm -rf dist/",
-    "build": "parcel build src/index.html"
+    "start": "esbuild src/index.tsx --servedir=static --outdir=static --bundle --minify --sourcemap --define:process.env.NODE_ENV=\\\"development\\\" --serve=localhost:1234",
+    "build": "rm -rf dist && esbuild src/index.tsx --bundle --outdir=dist --minify --sourcemap --define:process.env.NODE_ENV=\\\"production\\\" && cp static/* dist"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.17",
+    "@parcel/transformer-typescript-tsc": "*",
     "@types/emoji-mart": "^3.0.4",
     "@types/faker": "^4.1.12",
     "@types/humanize-duration": "^3.18.1",
@@ -52,7 +53,6 @@
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
     "@types/react-redux": "^7.1.16",
-    "@types/uuid": "^8.3.0",
-    "parcel-bundler": "^1.12.4"
+    "@types/uuid": "^8.3.0"
   }
 }
