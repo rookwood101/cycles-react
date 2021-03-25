@@ -3,6 +3,8 @@ import { CachedTask } from './domain/Task';
 import humanizeDuration from 'humanize-duration';
 import { DateTime } from 'luxon';
 import { prettyPrintRepetitionRule } from './domain/Schedule';
+import 'bootstrap/dist/css/bootstrap.min.css'
+import { Card, ListGroup } from 'react-bootstrap';
 
 interface TaskDetailProps {
     task: CachedTask | null,
@@ -15,13 +17,14 @@ const TaskDetail: FunctionComponent<TaskDetailProps> = (props) => {
             weekday: 'short', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
         })
         return (
-            <div style={{position: "absolute", top:0, left:0}}>
-                <p>Selected Task</p>
-                <p>UUID: {props.task.uuid}</p>
-                <p>Description: {props.task.description}</p>
-                <p>Occurs every {prettyPrintRepetitionRule(props.task.schedule)}</p>
-                <p>Next occurrence in {humanizeDuration(props.task.durationUntil, { largest: 2 })} on {nextOccurrenceFormatted}</p>
-            </div>
+            <Card style={{position: "absolute", top:0, left:0}}>
+                <Card.Header>{props.task.emoji} {props.task.description}</Card.Header>
+                <ListGroup>
+                    <ListGroup.Item>Every {prettyPrintRepetitionRule(props.task.schedule)}</ListGroup.Item>
+                    <ListGroup.Item>Next occurrence in {humanizeDuration(props.task.durationUntil, { largest: 2 })} on {nextOccurrenceFormatted}</ListGroup.Item>
+                    <ListGroup.Item>{props.task.uuid}</ListGroup.Item>
+                </ListGroup>
+            </Card>
         );
     } else {
         return null;

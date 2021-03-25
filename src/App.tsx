@@ -5,6 +5,7 @@ import ConcentricCircles from './ConcentricCircles';
 import { addTask } from './redux/tasksSlice';
 import { CachedTask } from './domain/Task';
 import TaskDetail from './TaskDetail';
+import { Button } from 'react-bootstrap';
 
 const App: React.FC<{}> = (props) => {
     const dispatch = useDispatch();
@@ -12,7 +13,7 @@ const App: React.FC<{}> = (props) => {
     const [selectedTask, setSelectedTask] = useState<CachedTask|null>(null);
     return (
         <div className="App">
-            <button onClick={() => setModalOpen(true)}>Add Task</button>
+            <Button onClick={() => setModalOpen(true)} variant="primary">Add Task</Button>
             <AddTaskModal 
                 isOpen={isModalOpen}
                 handleClose={() => setModalOpen(false)}
